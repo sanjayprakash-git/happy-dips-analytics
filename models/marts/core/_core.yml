@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: fct_orders
+    description: >
+      One row per order with revenue, delivery-app commission and theoretical
+      ingredient cost. Refunded orders are kept but carry zero revenue.
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+      - name: revenue_inr
+        description: Net of discounts. Zero for refunded orders.
+      - name: aggregator_commission_inr
+        description: Swiggy 22%, Zomato 24% of net order value (seed aggregator_commission).
+      - name: ingredient_cost_inr
+        description: Recipe quantity x that week's purchase price at the site.
+
+  - name: fct_order_items
+    description: One row per order line, costed.
+
+  - name: dim_customers
+    description: Loyalty customers with first-order cohort and lifetime value.
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+      - name: lifetime_orders
+        data_tests:
+          - not_null
+
+  - name: dim_locations
+    columns:
+      - name: location_id
+        data_tests: [unique, not_null]
+
+  - name: dim_products
+    columns:
+      - name: product_id
+        data_tests: [unique, not_null]
+
+  - name: dim_date
+    description: Calendar spine with Indian financial year and seasonal flags.
+    columns:
+      - name: date_day
+        data_tests: [unique, not_null]

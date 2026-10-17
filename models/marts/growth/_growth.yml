@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: mart_customer_cohorts
+    description: Monthly retention cohorts for identified customers.
+    columns:
+      - name: retention_pct
+        description: Share of the cohort active N months after their first order month.
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [cohort_month, months_since_first_order]
+
+  - name: mart_site_ramp_up
+    description: Every site indexed by months since opening, to compare launches like-for-like.
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [location_id, month]
+
+  - name: mart_product_performance
+    description: Monthly product volume, revenue share and ingredient margin.
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [month, product_id]

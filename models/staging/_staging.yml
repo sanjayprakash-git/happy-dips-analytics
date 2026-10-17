@@ -1,0 +1,60 @@
+version: 2
+
+models:
+  - name: stg_pos__orders
+    description: Deduplicated, normalised POS orders. One row per order.
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+      - name: location_id
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('stg_pos__locations'), field: location_id}}
+      - name: channel
+        data_tests:
+          - accepted_values: {arguments: {values: ['walk_in', 'swiggy', 'zomato']}}
+      - name: payment_method
+        data_tests:
+          - accepted_values: {arguments: {values: ['upi', 'cash', 'card', 'aggregator']}}
+      - name: status
+        data_tests:
+          - accepted_values: {arguments: {values: ['completed', 'refunded']}}
+      - name: customer_id
+        data_tests:
+          - relationships: {arguments: {to: ref('stg_pos__customers'), field: customer_id}}
+
+  - name: stg_pos__order_items
+    columns:
+      - name: order_id
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('stg_pos__orders'), field: order_id}}
+      - name: product_id
+        data_tests:
+          - relationships: {arguments: {to: ref('stg_pos__products'), field: product_id}}
+
+  - name: stg_pos__locations
+    columns:
+      - name: location_id
+        data_tests: [unique, not_null]
+      - name: ownership_model
+        data_tests:
+          - accepted_values: {arguments: {values: ['owned', 'franchise']}}
+
+  - name: stg_pos__products
+    columns:
+      - name: product_id
+        data_tests: [unique, not_null]
+
+  - name: stg_pos__customers
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+
+  - name: stg_pos__ingredient_purchases
+    columns:
+      - name: purchase_id
+        data_tests: [unique, not_null]
+      - name: ingredient_id
+        data_tests:
+          - relationships: {arguments: {to: ref('stg_pos__ingredients'), field: ingredient_id}}

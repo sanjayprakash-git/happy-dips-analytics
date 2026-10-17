@@ -1,0 +1,9 @@
+# Local DuckDB warehouse. To run on BigQuery instead, add a `bigquery` output
+# here and run with --target bigquery (models use portable SQL where possible).
+happy_dips:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: happy_dips.duckdb
+      threads: 4

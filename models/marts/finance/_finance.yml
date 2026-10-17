@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: fct_location_monthly_pnl
+    description: >
+      Monthly P&L per site. Gross profit uses ACTUAL supplier spend; waste is the
+      gap between actual spend and theoretical recipe cost. Franchise rows are the
+      franchisee's P&L, with royalty and marketing fund owed to HQ shown separately.
+    columns:
+      - name: location_id
+        data_tests: [not_null]
+      - name: waste_cost_inr
+        description: Actual ingredient spend minus theoretical recipe cost.
+      - name: site_ebitda_inr
+        description: Gross profit less rent, staff, utilities, local marketing and franchise fees.
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [location_id, month]
+
+  - name: mart_brand_monthly
+    description: >
+      Brand-level view: system-wide sales vs what HQ earns (owned-site EBITDA plus
+      franchise royalty and marketing fund).
+    columns:
+      - name: month
+        data_tests: [unique, not_null]

@@ -1,0 +1,38 @@
+version: 2
+
+sources:
+  - name: pos
+    description: >
+      Raw exports from the point-of-sale system, supplier invoices and the finance
+      ledger. Loaded straight from CSV (data/raw/) by DuckDB.
+    config:
+      meta:
+        external_location: "read_csv('data/raw/{name}.csv', header = true, auto_detect = true)"
+    tables:
+      - name: locations
+        description: Every site (push cart, flagship branch, franchise kiosks).
+      - name: products
+        description: Menu export. Product names may contain stray whitespace.
+      - name: recipes
+        description: Bill of materials. Ingredient quantity per unit sold.
+      - name: ingredients
+      - name: customers
+        description: Loyalty customers identified by phone number (UPI or delivery app).
+      - name: orders
+        description: >
+          One row per order, but the POS sync occasionally writes the same order twice.
+          Channel and payment method casing is inconsistent.
+        columns:
+          - name: order_id
+            description: Expected unique; duplicates are removed in stg_pos__orders.
+            data_tests:
+              - unique:
+                  config:
+                    severity: warn
+      - name: order_items
+      - name: ingredient_purchases
+        description: Weekly supplier purchases per location (includes waste).
+      - name: operating_expenses
+        description: Monthly rent, staff, utilities and local marketing per location.
+      - name: franchise_terms
+        description: Royalty and marketing-fund percentages paid by franchisees to HQ.
